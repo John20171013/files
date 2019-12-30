@@ -7,8 +7,6 @@ import com.example.myfiles.other.MyFile;
 import com.example.myfiles.other.Now;
 import com.example.myfiles.other.Ocr;
 import com.example.myfiles.repositories.BrowseRepository;
-import com.github.junrar.Archive;
-import com.github.junrar.rarfile.FileHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,8 +27,8 @@ import java.util.zip.ZipFile;
 @Controller
 public class FileController {
 
-//    static String path1 = "C://inetpub/wwwroot/MyFiles/MyDirs/";
-    static String path1 = "E://myfiles/";
+    static String path1 = "C://inetpub/wwwroot/MyFiles/MyDirs/";
+    //    static String path1 = "E://myfiles/";
     @Autowired
     private BrowseRepository browseRepository;
 
@@ -56,7 +54,7 @@ public class FileController {
     @PostMapping("/addDir")  //在当前路径下新建文件夹
     @ResponseBody
     public int addDir(@RequestParam("filesUrl") String filesUrl,
-                       @RequestParam("dirName") String dirName){  //参数需'/'结尾表示文件夹
+                      @RequestParam("dirName") String dirName){  //参数需'/'结尾表示文件夹
         File f = new File(path1+filesUrl+dirName);
         if(!f.exists()) {
             f.mkdir();
@@ -80,7 +78,7 @@ public class FileController {
     @PostMapping("/moveFile")  //移动文件，可重命名
     @ResponseBody
     public int moveFile(@RequestParam("path1") String path1,
-                          @RequestParam("path2") String path2){
+                        @RequestParam("path2") String path2){
 
         return MyFile.moveFiles(path1,path2);
     }
@@ -145,9 +143,9 @@ public class FileController {
         File f = new File("C://inetpub/wwwroot/MyFiles/recycle bin") ;		// 实例化File类的对象
         List<MyFile> allFiles = new ArrayList<MyFile>();
         MyFile.sortType = sortType;
-		File files[] = f.listFiles() ;	// 列出全部内容
-		for(int i=0;i<files.length;i++){
-		    if (!files[i].isDirectory()){
+        File files[] = f.listFiles() ;	// 列出全部内容
+        for(int i=0;i<files.length;i++){
+            if (!files[i].isDirectory()){
                 MyFile myFile = new MyFile();
                 myFile.setName(files[i].getName());
                 myFile.setSize(files[i].length());
@@ -285,20 +283,21 @@ public class FileController {
                 zip.close();
             }
         }else if(suffix.equals("rar")){
-            addOperation(browse,session,"在线解压rar");
-            Archive archive = null;
-            try{
-                archive = new Archive(f);
-                FileHeader fh = archive.nextFileHeader();
-                while(fh!=null){
-                    if(!fh.isDirectory())list.add(fh.getFileNameString());
-                    fh = archive.nextFileHeader();
-                }
-            }catch (Exception e){
-                System.out.println("-----rar解压出错------");
-            }finally {
-                archive.close();
-            }
+            list.add("rar无法解压");
+//            addOperation(browse,session,"在线解压rar");
+//            Archive archive = null;
+//            try{
+//                archive = new Archive(f);
+//                FileHeader fh = archive.nextFileHeader();
+//                while(fh!=null){
+//                    if(!fh.isDirectory())list.add(fh.getFileNameString());
+//                    fh = archive.nextFileHeader();
+//                }
+//            }catch (Exception e){
+//                System.out.println("-----rar解压出错------");
+//            }finally {
+//                archive.close();
+//            }
         }else{
             addOperation(browse,session,"在线解压失败");
         }
@@ -336,8 +335,8 @@ public class FileController {
     @PostMapping("/addDownloadOperation")
     @ResponseBody
     public void addDownloadOperation(@RequestParam("file") String file,
-                              Browse browse,
-                              HttpSession session){
+                                     Browse browse,
+                                     HttpSession session){
         addOperation(browse,session,"下载【"+file+"】");
     }
 
